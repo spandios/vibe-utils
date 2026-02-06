@@ -1,0 +1,15 @@
+{
+  "$schema": "./agents_review_projects.schema.json",
+  "defaults": {
+    "interval_days": 21,
+    "docs": ["CLAUDE.md", "AGENTS.md"]
+  },
+  "projects": [
+    {
+      "name": "app",
+      "path": "/Users/name/app-path",
+      "interval_days": 14,
+      "docs": ["CLAUDE.md", "AGENTS.md"]
+    }
+  ]
+}

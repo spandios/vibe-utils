@@ -1,0 +1,4 @@
+interface:
+  display_name: "Split Commit"
+  short_description: "Split large changes into scoped commits"
+  default_prompt: "Use $split-commit to break large working-tree changes into multiple logical commits using git add + git commit."

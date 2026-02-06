@@ -1,0 +1,20 @@
+{
+  "$schema": "./agents_review_projects.schema.json",
+  "defaults": {
+    "interval_days": 21,
+    "docs": ["CLAUDE.md", "AGENTS.md"]
+  },
+  "projects": [
+    {
+      "name": "romand-cx-api",
+      "path": "/Users/heojuyeong/Code/cx/romand-cx-api",
+      "interval_days": 14,
+      "docs": ["CLAUDE.md", "AGENTS.md"]
+    },
+    {
+      "name": "beauty-",
+      "path": "/Users/heojuyeong/Code/common/beauty-sale",
+      "docs": ["CLAUDE.md", "AGENTS.md"]
+    }
+  ]
+}
