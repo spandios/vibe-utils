@@ -103,6 +103,6 @@ fi
 case "$RESOLVED" in
     claude) claude --model "$MODEL" -p "$PROMPT" ;;
     gemini) gemini -m "$MODEL" -p "$PROMPT" 2>/dev/null | grep -vE '^MCP STDERR |^[0-9]{4}/[0-9]{2}/[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2} \[' | sed '/./,$!d' ;;
-    codex)  codex exec -m "$MODEL" "$PROMPT" 2>/dev/null ;;
+    codex)  codex exec -m "$MODEL" -c model_reasoning_effort=high "$PROMPT" 2>/dev/null ;;
     *)      echo "✗ 알 수 없는 provider: $RESOLVED" >&2; exit 1 ;;
 esac
