@@ -1,0 +1,4 @@
+interface:
+  display_name: "Commit Checkpoint"
+  short_description: "Ask before commit and run preferred command"
+  default_prompt: "Use $commit-checkpoint to pause at commit points, ask for confirmation, and run the configured commit command template with my commit message."
