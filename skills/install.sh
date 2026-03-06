@@ -2,23 +2,23 @@
 set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SKILLS_DIR="${VIBE_SKILLS_DIR:-$DIR}"
 
-CODEX_DIR="$HOME/.codex"
-CLAUDE_DIR="$HOME/.claude"
+CODEX_SKILLS_DIR="${CODEX_SKILLS_DIR:-$HOME/.codex/skills}"
+CLAUDE_SKILLS_DIR="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
 
-mkdir -p "$CODEX_DIR/skills" "$CLAUDE_DIR/skills"
+mkdir -p "$CODEX_SKILLS_DIR" "$CLAUDE_SKILLS_DIR"
 
-# 스킬 디렉토리만 개별 복사 (기존 스킬 유지, 새 스킬 추가/업데이트)
 installed=()
-for skill_dir in "$DIR"/*/; do
+for skill_dir in "$SKILLS_DIR"/*/; do
   [ -d "$skill_dir" ] || continue
   skill_name="$(basename "$skill_dir")"
   [ "${skill_name#*.}" != "$skill_name" ] && continue
   [ "$skill_name" = "commit-checkpoint" ] && continue
   [ -f "$skill_dir/SKILL.md" ] || continue
-  rm -rf "$CODEX_DIR/skills/$skill_name" "$CLAUDE_DIR/skills/$skill_name"
-  cp -R "$skill_dir" "$CODEX_DIR/skills/$skill_name"
-  cp -R "$skill_dir" "$CLAUDE_DIR/skills/$skill_name"
+  rm -rf "$CODEX_SKILLS_DIR/$skill_name" "$CLAUDE_SKILLS_DIR/$skill_name"
+  ln -sfn "$skill_dir" "$CODEX_SKILLS_DIR/$skill_name"
+  ln -sfn "$skill_dir" "$CLAUDE_SKILLS_DIR/$skill_name"
   installed+=("$skill_name")
 done
 
@@ -28,5 +28,5 @@ for name in "${installed[@]}"; do
 done
 echo ""
 echo "설치 경로:"
-echo "  - $CODEX_DIR/skills/"
-echo "  - $CLAUDE_DIR/skills/"
+echo "  - $CODEX_SKILLS_DIR"
+echo "  - $CLAUDE_SKILLS_DIR"
