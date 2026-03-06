@@ -55,6 +55,14 @@ resolve_dir() {
   (cd "$path" && pwd -P)
 }
 
+cleanup_imported_skill() {
+  local skill_dir="$1"
+  [ -d "$skill_dir" ] || return 0
+
+  find "$skill_dir" -name '.DS_Store' -type f -exec unlink {} \;
+  find "$skill_dir" -type l -mindepth 1 -exec unlink {} \;
+}
+
 repo_has_skill() {
   local skill_name="$1"
   [ -f "$SKILLS_DIR/$skill_name/SKILL.md" ]
@@ -125,6 +133,7 @@ import_one() {
 
   IFS=$'\t' read -r source_name source_path <<<"$candidate"
   cp -R "$source_path" "$SKILLS_DIR/$skill_name"
+  cleanup_imported_skill "$SKILLS_DIR/$skill_name"
   echo "imported: $skill_name <- [$source_name] $source_path"
 }
 
