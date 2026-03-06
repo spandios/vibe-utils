@@ -6,18 +6,20 @@ description: "Use when the task requires automating a real browser from the term
 
 # Playwright CLI Skill
 
-Drive a real browser from the terminal using `playwright-cli`. Prefer the bundled wrapper script so the CLI works even when it is not globally installed.
+Drive a real browser from the terminal using `playwright-cli`. Prefer the bundled wrapper script so the CLI works with either a global `playwright-cli` install or `npx @playwright/cli`.
 Treat this skill as CLI-first automation. Do not pivot to `@playwright/test` unless the user explicitly asks for test files.
+
+`playwright-mcp` is not a drop-in replacement for this skill. It runs an MCP server for MCP-capable clients, while this skill expects the command-oriented Playwright CLI workflow.
 
 ## Prerequisite check (required)
 
-Before proposing commands, check whether `npx` is available (the wrapper depends on it):
+Before proposing commands, check whether either `playwright-cli` or `npx` is available:
 
 ```bash
-command -v npx >/dev/null 2>&1
+command -v playwright-cli >/dev/null 2>&1 || command -v npx >/dev/null 2>&1
 ```
 
-If it is not available, pause and ask the user to install Node.js/npm (which provides `npx`). Provide these steps verbatim:
+If neither is available, pause and ask the user to install Node.js/npm (which provides `npx`) or install `playwright-cli` globally. Provide these steps verbatim:
 
 ```bash
 # Verify Node/npm are installed
@@ -25,11 +27,11 @@ node --version
 npm --version
 
 # If missing, install Node.js/npm, then:
-npm install -g @playwright/mcp@latest
+npm install -g @playwright/cli@latest
 playwright-cli --help
 ```
 
-Once `npx` is present, proceed with the wrapper script. A global install of `playwright-cli` is optional.
+Once `playwright-cli` or `npx` is present, proceed with the wrapper script. A global install of `playwright-cli` is optional.
 
 ## Skill path (set once)
 
@@ -56,7 +58,7 @@ Use the wrapper script:
 If the user prefers a global install, this is also valid:
 
 ```bash
-npm install -g @playwright/mcp@latest
+npm install -g @playwright/cli@latest
 playwright-cli --help
 ```
 
@@ -121,13 +123,19 @@ Refs can go stale. When a command fails due to a missing ref, snapshot again.
 
 ## Wrapper script
 
-The wrapper script uses `npx --package @playwright/mcp playwright-cli` so the CLI can run without a global install:
+The wrapper script prefers a global `playwright-cli` binary and otherwise falls back to `npx @playwright/cli` so the CLI can run without a global install:
 
 ```bash
 "$PWCLI" --help
 ```
 
 Prefer the wrapper unless the repository already standardizes on a global install.
+
+## Playwright CLI vs Playwright MCP
+
+- Use this skill when the task is terminal-driven browser automation for a coding agent.
+- Use `playwright-mcp` only when the host tool is explicitly configuring an MCP server.
+- Do not replace `playwright-cli` commands like `open`, `snapshot`, or `click` with `playwright-mcp`; the MCP server has a different interface.
 
 ## References
 
