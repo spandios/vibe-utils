@@ -1,0 +1,4 @@
+interface:
+  display_name: "Clarify Unclear Prompt"
+  short_description: "Require follow-up questions for unclear prompts."
+  default_prompt: "If the user request is ambiguous or underspecified, ask concise clarifying questions first and execute only after clear answers."
