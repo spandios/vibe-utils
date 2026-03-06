@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feature Scope Analyzer"
+  short_description: "Estimate code and architecture impact before implementation"
+  default_prompt: "Use $assessing-feature-scope to inspect the existing codebase and estimate change scope before implementing a new feature."
