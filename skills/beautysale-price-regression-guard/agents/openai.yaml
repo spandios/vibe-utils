@@ -1,0 +1,4 @@
+interface:
+  display_name: "BeautySale Price Regression Guard"
+  short_description: "Review BeautySale price regression risk before coding"
+  default_prompt: "Use $beautysale-price-regression-guard to review a BeautySale price or deal calculation change before implementation."

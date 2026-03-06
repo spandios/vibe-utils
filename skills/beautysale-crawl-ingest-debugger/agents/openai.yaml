@@ -1,0 +1,4 @@
+interface:
+  display_name: "BeautySale Crawl Ingest Debugger"
+  short_description: "Trace BeautySale crawl ingestion failures end to end"
+  default_prompt: "Use $beautysale-crawl-ingest-debugger to trace a BeautySale crawl ingestion issue end to end."

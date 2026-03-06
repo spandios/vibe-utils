@@ -13,7 +13,10 @@ installed=()
 for skill_dir in "$DIR"/*/; do
   [ -d "$skill_dir" ] || continue
   skill_name="$(basename "$skill_dir")"
+  [ "${skill_name#*.}" != "$skill_name" ] && continue
   [ "$skill_name" = "commit-checkpoint" ] && continue
+  [ -f "$skill_dir/SKILL.md" ] || continue
+  rm -rf "$CODEX_DIR/skills/$skill_name" "$CLAUDE_DIR/skills/$skill_name"
   cp -R "$skill_dir" "$CODEX_DIR/skills/$skill_name"
   cp -R "$skill_dir" "$CLAUDE_DIR/skills/$skill_name"
   installed+=("$skill_name")
