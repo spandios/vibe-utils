@@ -6,6 +6,7 @@ SKILLS_DIR="${VIBE_SKILLS_DIR:-$DIR}"
 CLAUDE_SKILLS_DIR="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
 CODEX_SKILLS_DIR="${CODEX_SKILLS_DIR:-$HOME/.codex/skills}"
 OPENCODE_SKILLS_DIR="${OPENCODE_SKILLS_DIR:-}"
+MARKETPLACES_DIR="${MARKETPLACES_DIR:-$HOME/.claude/plugins/marketplaces}"
 
 usage() {
   cat <<'EOF'
@@ -20,6 +21,7 @@ Environment overrides:
   CLAUDE_SKILLS_DIR
   CODEX_SKILLS_DIR
   OPENCODE_SKILLS_DIR
+  MARKETPLACES_DIR
 EOF
 }
 
@@ -68,6 +70,43 @@ repo_has_skill() {
   [ -f "$SKILLS_DIR/$skill_name/SKILL.md" ]
 }
 
+print_marketplace_candidates() {
+  [ -d "$MARKETPLACES_DIR" ] || return 0
+  local skill_md skill_dir skill_name rel repo_name
+  while IFS= read -r -d '' skill_md; do
+    skill_dir="$(dirname "$skill_md")"
+    skill_name="$(basename "$skill_dir")"
+    is_hidden_name "$skill_name" && continue
+    [ "$skill_name" = ".system" ] && continue
+    repo_has_skill "$skill_name" && continue
+    rel="${skill_dir#"$MARKETPLACES_DIR"/}"
+    repo_name="${rel%%/*}"
+    printf '%s\t%s\t%s\n' "marketplace:$repo_name" "$skill_name" "$skill_dir"
+  done < <(find "$MARKETPLACES_DIR" -name 'SKILL.md' -not -path '*/.git/*' -print0)
+}
+
+find_marketplace_candidate_path() {
+  local wanted_name="$1"
+  [ -d "$MARKETPLACES_DIR" ] || return 1
+  local skill_md skill_dir skill_name rel repo_name
+  while IFS= read -r -d '' skill_md; do
+    skill_dir="$(dirname "$skill_md")"
+    skill_name="$(basename "$skill_dir")"
+    [ "$skill_name" = "$wanted_name" ] || continue
+    is_hidden_name "$skill_name" && continue
+    rel="${skill_dir#"$MARKETPLACES_DIR"/}"
+    repo_name="${rel%%/*}"
+    printf '%s\t%s\n' "marketplace:$repo_name" "$skill_dir"
+    return 0
+  done < <(find "$MARKETPLACES_DIR" -name 'SKILL.md' -not -path '*/.git/*' -print0)
+  return 1
+}
+
+collect_all_candidates() {
+  print_candidates claude "$CLAUDE_SKILLS_DIR" codex "$CODEX_SKILLS_DIR" opencode "$OPENCODE_SKILLS_DIR"
+  print_marketplace_candidates
+}
+
 print_candidates() {
   local source_name source_root skill_dir skill_name
   while [ "$#" -gt 1 ]; do
@@ -86,7 +125,7 @@ print_candidates() {
 
 scan_command() {
   local output
-  output="$(print_candidates claude "$CLAUDE_SKILLS_DIR" codex "$CODEX_SKILLS_DIR" opencode "$OPENCODE_SKILLS_DIR")"
+  output="$(collect_all_candidates)"
   if [ -z "$output" ]; then
     echo "vibe-utils/skills에 없는 외부 스킬 없음"
     return 0
@@ -126,7 +165,8 @@ import_one() {
     return 0
   fi
 
-  candidate="$(find_candidate_path "$skill_name" claude "$CLAUDE_SKILLS_DIR" codex "$CODEX_SKILLS_DIR" opencode "$OPENCODE_SKILLS_DIR")" || {
+  candidate="$(find_candidate_path "$skill_name" claude "$CLAUDE_SKILLS_DIR" codex "$CODEX_SKILLS_DIR" opencode "$OPENCODE_SKILLS_DIR")" || \
+  candidate="$(find_marketplace_candidate_path "$skill_name")" || {
     echo "error: 외부에서 찾지 못함 ($skill_name)" >&2
     return 1
   }
@@ -139,7 +179,7 @@ import_one() {
 
 import_all() {
   local output imported_any=0
-  output="$(print_candidates claude "$CLAUDE_SKILLS_DIR" codex "$CODEX_SKILLS_DIR" opencode "$OPENCODE_SKILLS_DIR")"
+  output="$(collect_all_candidates)"
   if [ -z "$output" ]; then
     echo "import할 외부 스킬 없음"
     return 0
