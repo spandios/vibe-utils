@@ -6,9 +6,11 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SOURCE_COMMON="$DIR/COMMON-AGENTS.md"
 SOURCE_CODEX_AGENTS="$DIR/AGENTS.md"
 SOURCE_CLAUDE_MD="$DIR/CLAUDE.md"
+SOURCE_PLAYBOOK="$DIR/agency-agents-playbook.md"
 
 CODEX_DIR="$HOME/.codex"
 CLAUDE_DIR="$HOME/.claude"
+PLAYBOOK_LINK="$HOME/agent-playbook.md"
 
 mkdir -p "$CODEX_DIR" "$CLAUDE_DIR"
 
@@ -30,6 +32,13 @@ else
   exit 1
 fi
 
+if [[ -f "$SOURCE_PLAYBOOK" ]]; then
+  ln -sfn "$SOURCE_PLAYBOOK" "$PLAYBOOK_LINK"
+fi
+
 echo "설치 완료:"
 echo "  - $CODEX_DIR/AGENTS.md"
 echo "  - $CLAUDE_DIR/CLAUDE.md"
+if [[ -f "$SOURCE_PLAYBOOK" ]]; then
+  echo "  - $PLAYBOOK_LINK -> $SOURCE_PLAYBOOK"
+fi
