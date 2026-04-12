@@ -1,4 +1,0 @@
-interface:
-  display_name: "BeautySale Price Regression Guard"
-  short_description: "Review BeautySale price tier and copy drift before coding"
-  default_prompt: "Use $beautysale-price-regression-guard to audit a BeautySale price-tier, fallback copy, or DTO/UI drift before implementing a fix."

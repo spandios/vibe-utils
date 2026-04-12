@@ -1,4 +1,0 @@
-interface:
-  display_name: "BeautySale API Contract Guard"
-  short_description: "Guard BeautySale API contract, auth, tests, and docs"
-  default_prompt: "Use $beautysale-api-contract-guard to review a BeautySale API contract change before implementation."
